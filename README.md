@@ -406,7 +406,7 @@
 - 函数应该只有一层抽象
 
 >当你的函数有超过一层的抽象时便意味着这个函数做了太多事情。解耦这个函数致使其变得可重用和更易测试。
-
+>
 >不友好的:
 >
 >```php
@@ -542,7 +542,7 @@
 >当你使用`flag`时便意味着你的函数做了超过一件事情。前面我们也提到了，函数应该只做一件事情。如果你的代码取决于一个`boolean`，那么还是把这些内容拆分出来吧。
 >
 >不友好的
-
+>
 >```php
 >function createFile(string $name, bool $temp = false): void
 >{
@@ -555,7 +555,7 @@
 >```
 >
 >友好的
-
+>
 >```php
 >function createFile(string $name): void
 >{
@@ -644,27 +644,27 @@
 >    }
 >}
 >```
-
-
+>
+>
 >>通过创建`Configuration`类的实例来引入配置
-
+>
 >```php
 >$configuration = new Configuration([
 >    'foo' => 'bar',
 >]);
 >```
-
+>
 >>至此，你就可以是在你的项目中使用这个配置了。
-
+>
 - 避免使用单例模式
 >单例模式是一种[反模式](https://en.wikipedia.org/wiki/Singleton_pattern)。为什么不建议使用:
 > 1. 他们通常使用一个**全局实例**，为什么这么糟糕？因为**你隐藏了依赖关系**在你的项目的代码中，而不是通过接口暴露出来。你应该有[意识](https://en.wikipedia.org/wiki/Code_smell)的去避免那些全局的东西。
 > 2. 他们违背了**单一职责原则**：他们会自己**控制自己的生命周期**。
 > 3. 这种模式会自然而然的使代码[耦合](https://en.wikipedia.org/wiki/Coupling_%28computer_programming%29)在一起。这会让他们在测试中，很多情况下都**理所当然的不一致**。
 > 4. 他们持续在整个项目的生命周期中。另外一个严重的打击是**当你需要排序测试的时候**，在单元测试中这会是一个不小的麻烦。为什么？因为每个单元测试都应该依赖于另外一个。
-
+>
 >不友好的
-
+>
 >```php
 >class DBConnection
 >{
@@ -686,12 +686,12 @@
 >
 >    // ...
 >}
-
+>
 >$singleton = DBConnection::getInstance();
 >```
-
+>
 >友好的
-
+>
 >```php
 >class DBConnection
 >{
@@ -703,27 +703,28 @@
 >     // ...
 >}
 >```
-
+>
 >>使用[DSN](http://php.net/manual/en/pdo.construct.php#refsect1-pdo.construct-parameters)配置来创建一个`DBConnection`类的单例。
-
+>
 >```php
 >$connection = new DBConnection($dsn);
 >```
-
+>
 >>此时，在你的项目中必须使用`DBConnection`的单例。
+>
 
 - 对条件判断进行包装
 
 >不友好的
-
+>
 >```php
 >if ($article->state === 'published') {
 >    // ...
 >}
 >```
-
+>
 >友好的
-
+>
 >```php
 >if ($article->isPublished()) {
 >    // ...
@@ -738,7 +739,7 @@
 >{
 >    // ...
 >}
-
+>
 >if (!isDOMNodeNotPresent($node))
 >{
 >    // ...
@@ -746,13 +747,13 @@
 >```
 
 >友好的
-
+>
 >```php
 >function isDOMNodePresent(\DOMNode $node): bool
 >{
 >    // ...
 >}
-
+>
 >if (isDOMNodePresent($node)) {
 >    // ...
 >}
@@ -763,7 +764,7 @@
 >这似乎是一个不可能的任务。很多人的脑海中可能会在第一时间萦绕“如果没有`if`条件我还能做什么呢？”。答案就是，在大多数情况下，你可以使用多态去处理这个难题。此外，可能有人又会说了，“即使多态可以做到，但是我们为什么要这么做呢？”，对此我们的解释是，一个函数应该只做一件事情，这也正是我们在前面所提到的让代码更加整洁的原则。当你的函数中使用了太多的`if`条件时，便意味着你的函数做了超过一件事情。牢记：要专一。
 
 >不友好的:
-
+>
 >```php
 >class Airplane
 >{
@@ -782,9 +783,9 @@
 >    }
 >}
 >```
-
+>
 >友好的:
-
+>
 >```php
 >interface Airplane
 >{
@@ -792,7 +793,7 @@
 >
 >    public function getCruisingAltitude(): int;
 >}
-
+>
 >class Boeing777 implements Airplane
 >{
 >    // ...
@@ -802,7 +803,7 @@
 >        return $this->getMaxAltitude() - $this->getPassengerCount();
 >    }
 >}
-
+>
 >class AirForceOne implements Airplane
 >{
 >    // ...
@@ -812,7 +813,7 @@
 >        return $this->getMaxAltitude();
 >    }
 >}
-
+>
 >class Cessna implements Airplane
 >{
 >    // ...
@@ -827,9 +828,9 @@
 - 避免类型检测 (part 1)
 
 >`PHP`是一门弱类型语言，这意味着你的函数可以使用任何类型的参数。他在给予你无限的自由的同时又让你困扰，因为有有时候你需要做类型检测。这里有很多方式去避免这种事情，第一种方式就是统一`API`。
-
+>
 >不友好的：
-
+>
 >```php
 >function travelToTexas($vehicle): void
 >{
@@ -840,22 +841,22 @@
 >    }
 >}
 >```
-
+>
 >友好的：
-
-```php
-function travelToTexas(Traveler $vehicle): void
-{
-    $vehicle->travelTo(new Location('texas'));
-}
-```
+>
+>```php
+>function travelToTexas(Traveler $vehicle): void
+>{
+>    $vehicle->travelTo(new Location('texas'));
+>}
+>```
 
 - 避免类型检测 (part 2)
 
 >如果你正使用诸如字符串、整型和数组等基本类型，且要求版本是PHP 7+，不能使用多态，需要类型检测，那你应当考虑[类型声明](http://php.net/manual/en/functions.arguments.php#functions.arguments.type-declaration)或者严格模式。它提供了基于标准PHP语法的静态类型。手动检查类型的问题是做好了需要好多的废话，好像为了安全就可以不顾损失可读性。保持你的`PHP`代码整洁，写好测试，保持良好的回顾代码的习惯。否则的话，那就还是用PHP严格类型声明和严格模式来确保安全吧。
 
 >不友好的:
-
+>
 >```php
 >function combine($val1, $val2): int
 >{
@@ -866,9 +867,9 @@ function travelToTexas(Traveler $vehicle): void
 >    return $val1 + $val2;
 >}
 >```
-
+>
 >友好的:
-
+>
 >```php
 >function combine(int $val1, int $val2): int
 >{
@@ -879,32 +880,32 @@ function travelToTexas(Traveler $vehicle): void
 - 移除那些没有使用的代码
 
 >没有再使用的代码就好比重复代码一样糟糕。在你的代码库中完全没有必要保留。如果确定不再使用，那就把它删掉吧！如果有一天你要使用，你也可以在你的版本记录中找到它。
-
+>
 >不友好的:
-
+>
 >```php
 >function oldRequestModule(string $url): void
 >{
 >    // ...
 >}
-
+>
 >function newRequestModule(string $url): void
 >{
 >    // ...
 >}
-
+>
 >$request = newRequestModule($requestUrl);
 >inventoryTracker('apples', $request, 'www.inventory-awesome.io');
 >```
-
+>
 >友好的:
-
+>
 >```php
 >function requestModule(string $url): void
 >{
 >    // ...
 >}
-
+>
 >$request = requestModule($requestUrl);
 >inventoryTracker('apples', $request, 'www.inventory-awesome.io');
 >```
@@ -916,16 +917,16 @@ function travelToTexas(Traveler $vehicle): void
 - 使用对象封装
  
 >在`PHP`中你可以设置`public`，`protected`，和`private`关键词来修饰你的方法。当你使用它们，你就可以在一个对象中控制这些属性的修改权限了。
-
+>
 >* 当你想要对对象的属性进行除了“获取”之外的操作时，你不必再去浏览并在代码库中修改权限。
 >* 当你要做一些修改属性的操作时，你更易于在代码中做逻辑验证。
 >* 封装内部表示。
 >* 当你在做获取和设置属性的操作时，更易于添加`log`或`error`的操作。
 >* 当其他`class`继承了这个基类，你可以重写默认的方法。
 >* 你可以为一个服务延迟的去获取这个对象的属性值。
-
+>
 >不太友好的:
-
+>
 >```php
 >class BankAccount
 >{
@@ -937,9 +938,9 @@ function travelToTexas(Traveler $vehicle): void
 >// Buy shoes...
 >$bankAccount->balance -= 100;
 >```
-
+>
 >友好的:
-
+>
 >```php
 >class BankAccount
 >{
@@ -969,12 +970,12 @@ function travelToTexas(Traveler $vehicle): void
 >        return $this->balance;
 >    }
 >}
-
+>
 >$bankAccount = new BankAccount();
-
+>
 >// Buy shoes...
 >$bankAccount->withdraw($shoesPrice);
-
+>
 >// Get balance
 >$balance = $bankAccount->getBalance();
 >```
@@ -984,18 +985,18 @@ function travelToTexas(Traveler $vehicle): void
 >* `public`修饰的方法和属性同上来说被修改是比较危险的，因为一些外部的代码可以轻易的依赖于他们并且你没办法控制哪些代码依赖于他们。**对于所有用户的类来说，在类中可以修改是相当危险的。**
 >* `protected`修饰器和`public`同样危险，因为他们在继承链中同样可以操作。二者的区别仅限于权限机制，并且封装保持不变。**对于所有子类来说，在类中修改也是相当危险的。**
 >* `private`修饰符保证了代码只有在**自己类的内部修改才是危险的。**
-
+>
 >因此，当你在需要对外部的类设置权限时使用`private`修饰符去取代`public/protected`吧。
-
+>
 >如果需要了解更多信息你可以读[Fabien Potencier](https://github.com/fabpot)写的这篇[文章](http://fabien.potencier.org/pragmatism-over-theory-protected-vs-private.html)
-
+>
 >不太友好的:
-
+>
 >```php
 >class Employee
 >{
 >    public $name;
-
+>
 >    public function __construct(string $name)
 >    {
 >        $this->name = $name;
@@ -1007,17 +1008,17 @@ function travelToTexas(Traveler $vehicle): void
 >```
 
 >友好的:
-
+>
 >```php
 >class Employee
 >{
 >    private $name;
-
+>
 >    public function __construct(string $name)
 >    {
 >        $this->name = $name;
 >    }
-
+>
 >    public function getName(): string
 >    {
 >        return $this->name;
@@ -1031,49 +1032,49 @@ function travelToTexas(Traveler $vehicle): void
 - 组合优于继承
 
 >正如`the Gang of Four`在著名的[*Design Patterns*](https://en.wikipedia.org/wiki/Design_Patterns)中所说，你应该尽可能的使用组合而不是继承。不管是使用组合还是继承都有很多的优点。最重要的一个准则在于当你本能的想要使用继承时，不妨思考一下组合是否能让你的问题解决的更加优雅。在某些时候确实如此。
-
+>
 >你可能会这么问了，“那到底什么时候我应该使用继承呢？”这完全取决你你手头上的问题，下面正好有一些继承优于组合的例子：
-
+>
 > 1. 你的继承表达了“是一个”而不是“有一个”的关系(Human->Animal vs. User->UserDetails)。
 > 2. 你可能会重复的使用基类的代码(Humans can move like all animals)。
 > 3. 你渴望在修改代码的时候通过基类来统一调度(Change the caloric expenditure of all animals when they move)。
-
+>
 >不友好的:
-
+>
 >```php
 >class Employee 
 >{
 >    private $name;
 >    private $email;
-
+>
 >    public function __construct(string $name, string $email)
 >    {
 >        $this->name = $name;
 >        $this->email = $email;
 >    }
-
+>
 >    // ...
 >}
-
+>
 >// 这里不太合理的原因在于并非所有的职员都有`tax`这个特征。
-
+>
 >class EmployeeTaxData extends Employee 
 >{
 >    private $ssn;
 >    private $salary;
-    
+>   
 >    public function __construct(string $name, string $email, string $ssn, string $salary)
 >    {
 >        parent::__construct($name, $email);
-
+>
 >        $this->ssn = $ssn;
 >        $this->salary = $salary;
 >    }
-
+>
 >    // ...
 >}
 >```
-
+>
 >友好的:
 
 >```php
@@ -1081,13 +1082,13 @@ function travelToTexas(Traveler $vehicle): void
 >{
 >    private $ssn;
 >    private $salary;
-
+>
 >    public function __construct(string $ssn, string $salary)
 >    {
 >        $this->ssn = $ssn;
 >        $this->salary = $salary;
 >    }
-
+>
 >    // ...
 >}
 
@@ -1096,18 +1097,18 @@ function travelToTexas(Traveler $vehicle): void
 >    private $name;
 >    private $email;
 >    private $taxData;
-
+>
 >    public function __construct(string $name, string $email)
 >    {
 >        $this->name = $name;
 >        $this->email = $email;
 >    }
-
+>
 >    public function setTaxData(string $ssn, string $salary)
 >    {
 >        $this->taxData = new EmployeeTaxData($ssn, $salary);
 >    }
-
+>
 >    // ...
 >}
 >```
@@ -1115,91 +1116,91 @@ function travelToTexas(Traveler $vehicle): void
 - 避免链式调用(连贯接口)
 
 >在使用一些[链式方法](https://en.wikipedia.org/wiki/Method_chaining)时，这种[连贯接口](https://en.wikipedia.org/wiki/Fluent_interface)可以不断地指向当前对象让我们的代码显得更加清晰可读。
-
+>
 >通常情况下，我们在构建对象时都可以利用他的上下文这一特征，因为这种模式可以减少代码的冗余，不过在[PHPUnit Mock Builder]((https://phpunit.de/manual/current/en/test-doubles.html)或者[Doctrine Query Builder](http://docs.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/query-builder.html)所提及的，有时候这种方式会带来一些麻烦：
 > 1. 破坏[封装](https://en.wikipedia.org/wiki/Encapsulation_%28object-oriented_programming%29)
 > 2. 破坏[设计](https://en.wikipedia.org/wiki/Decorator_pattern)
 > 3. 难以[测试](https://en.wikipedia.org/wiki/Mock_object)
 > 4. 可能会难以阅读
-
+>
 >如果需要了解更多信息你可以读[Marco Pivetta](https://github.com/Ocramius)写的这篇[文章](https://ocramius.github.io/blog/fluent-interfaces-are-evil/)
-
+>
 >友好的:
-
+>
 >```php
 >class Car
 >{
 >    private $make = 'Honda';
 >    private $model = 'Accord';
 >    private $color = 'white';
-
+>
 >    public function setMake(string $make): self
 >    {
 >        $this->make = $make;
-
+>
 >        // NOTE: Returning this for chaining
 >        return $this;
 >    }
-
+>
 >    public function setModel(string $model): self
 >    {
 >        $this->model = $model;
-
+>
 >        // NOTE: Returning this for chaining
 >        return $this;
 >    }
-
+>
 >    public function setColor(string $color): self
 >    {
 >        $this->color = $color;
-
+>
 >        // NOTE: Returning this for chaining
 >        return $this;
 >    }
-
+>
 >    public function dump(): void
 >    {
 >        var_dump($this->make, $this->model, $this->color);
 >    }
 >}
-
+>
 >$car = (new Car())
 >  ->setColor('pink')
 >  ->setMake('Ford')
 >  ->setModel('F-150')
 >  ->dump();
 >```
-
+>
 >不友好的:
-
+>
 >```php
 >class Car
 >{
 >    private $make = 'Honda';
 >    private $model = 'Accord';
 >    private $color = 'white';
-
+>
 >    public function setMake(string $make): void
 >    {
 >        $this->make = $make;
 >    }
-
+>
 >    public function setModel(string $model): void
 >   {
 >        $this->model = $model;
 >    }
-
+>
 >    public function setColor(string $color): void
 >    {
 >        $this->color = $color;
 >    }
-
+>
 >    public function dump(): void
 >    {
 >        var_dump($this->make, $this->model, $this->color);
 >    }
 >}
-
+>
 >$car = new Car();
 >$car->setColor('pink');
 >$car->setMake('Ford');
@@ -1222,62 +1223,62 @@ function travelToTexas(Traveler $vehicle): void
 - 职责单一原则 (SRP)
 
 >正如Clean Code所述，“修改类应该只有一个理由”。我们总是喜欢在类中写入太多的方法，就像你在飞机上塞满你的行李箱。在这种情况下你的类没有高内聚的概念并且留下了很多可以修改的理由。尽可能的减少你需要去修改类的时间是非常重要的。如果在你的单个类中有太多的方法并且你经常修改的话，那么如果其他代码库中有引入这样的模块的话会非常难以理解。
-
+>
 >不友好的:
-
+>
 >```php
 >class UserSettings
 >{
 >    private $user;
-
+>
 >    public function __construct(User $user)
 >    {
 >        $this->user = $user;
 >    }
-
+>
 >    public function changeSettings(array $settings): void
 >    {
 >        if ($this->verifyCredentials()) {
 >            // ...
 >        }
 >    }
-
+>
 >    private function verifyCredentials(): bool
 >    {
 >        // ...
 >    }
 >}
 >```
-
+>
 >友好的:
-
+>
 >```php
 >class UserAuth 
 >{
 >    private $user;
-
+>
 >    public function __construct(User $user)
 >    {
 >        $this->user = $user;
 >    }
-    
+>  
 >    public function verifyCredentials(): bool
 >    {
 >        // ...
 >    }
 >}
-
+>
 >class UserSettings 
 >{
 >    private $user;
 >    private $auth;
-
+>
 >    public function __construct(User $user) 
 >    {
 >        $this->user = $user;
 >        $this->auth = new UserAuth($user);
 >    }
-
+>
 >    public function changeSettings(array $settings): void
 >    {
 >        if ($this->auth->verifyCredentials()) {
@@ -1290,80 +1291,80 @@ function travelToTexas(Traveler $vehicle): void
 - 开闭原则 (OCP)
 
 >正如Bertrand Meyer所说，“软件开发应该对扩展开发，对修改关闭。”这是什么意思呢？这个原则的意思大概就是说你应该允许其他人在不修改已经存在的功能的情况下去增加新功能。
-
+>
 >不友好的
-
+>
 >```php
 >abstract class Adapter
 >{
 >    protected $name;
-
+>
 >    public function getName(): string
 >    {
 >        return $this->name;
 >    }
 >}
-
+>
 >class AjaxAdapter extends Adapter
 >{
 >    public function __construct()
 >    {
 >       parent::__construct();
-
+>
 >        $this->name = 'ajaxAdapter';
 >    }
 >}
-
+>
 >class NodeAdapter extends Adapter
 >{
 >    public function __construct()
 >    {
 >        parent::__construct();
-
+>
 >        $this->name = 'nodeAdapter';
 >    }
 >}
-
+>
 >class HttpRequester
 >{
 >    private $adapter;
-
+>
 >    public function __construct(Adapter $adapter)
 >    {
 >        $this->adapter = $adapter;
 >    }
-
+>
 >    public function fetch(string $url): Promise
 >    {
 >        $adapterName = $this->adapter->getName();
-
+>
 >        if ($adapterName === 'ajaxAdapter') {
 >            return $this->makeAjaxCall($url);
 >        } elseif ($adapterName === 'httpNodeAdapter') {
 >            return $this->makeHttpCall($url);
 >        }
 >    }
-
+>
 >    private function makeAjaxCall(string $url): Promise
 >    {
 >        // request and return promise
 >    }
-
+>
 >    private function makeHttpCall(string $url): Promise
 >    {
 >        // request and return promise
 >    }
 >}
 >```
-
+>
 >友好的:
-
+>
 >```php
 >interface Adapter
 >{
 >    public function request(string $url): Promise;
 >}
-
+>
 >class AjaxAdapter implements Adapter
 >{
 >    public function request(string $url): Promise
@@ -1371,7 +1372,7 @@ function travelToTexas(Traveler $vehicle): void
 >        // request and return promise
 >    }
 >}
-
+>
 >class NodeAdapter implements Adapter
 >{
 >    public function request(string $url): Promise
@@ -1379,16 +1380,16 @@ function travelToTexas(Traveler $vehicle): void
 >        // request and return promise
 >    }
 >}
-
+>
 >class HttpRequester
 >{
 >    private $adapter;
-
+>
 >    public function __construct(Adapter $adapter)
 >    {
 >        $this->adapter = $adapter;
 >    }
-
+>
 >    public function fetch(string $url): Promise
 >    {
 >        return $this->adapter->request($url);
@@ -1399,51 +1400,51 @@ function travelToTexas(Traveler $vehicle): void
 - 里氏替换原则 (LSP)
 
 >这本身是一个非常简单的原则却起了一个不太容易理解的名字。这个原则通常的定义是“如果S是T的一个子类，那么对象T可以在没有任何警告的情况下被他的子类替换（例如：对象S可能代替对象T）一些更合适的属性。”好像更难理解了。
-
+>
 >最好的解释就是说如果你有一个父类和子类，那么你的父类和子类可以在原来的基础上任意交换。这个可能还是难以理解，我们举一个正方形-长方形的例子吧。在数学中，一个矩形属于长方形，但是如果在你的模型中通过继承使用了“is-a”的关系就不对了。
-
+>
 >不友好的:
-
+>
 >```php
 >class Rectangle
 >{
 >    protected $width = 0;
 >    protected $height = 0;
-
+>
 >    public function render(int $area): void
 >    {
 >        // ...
 >    }
-
+>
 >    public function setWidth(int $width): void
 >    {
 >        $this->width = $width;
 >    }
-
+>
 >    public function setHeight(int $height): void
 >    {
 >        $this->height = $height;
 >    }
-
+>
 >    public function getArea(): int
 >    {
 >       return $this->width * $this->height;
 >    }
 >}
-
+>
 >class Square extends Rectangle
 >{
 >    public function setWidth(int $width): void
 >    {
 >        $this->width = $this->height = $width;
 >    }
-
+>
 >    public function setHeight(int $height): void
 >    {
 >        $this->width = $this->height = $height;
 >    }
 >}
-
+>
 >function renderLargeRectangles(array $rectangles): void
 >{
 >    foreach ($rectangles as $rectangle) {
@@ -1453,54 +1454,54 @@ function travelToTexas(Traveler $vehicle): void
 >        $rectangle->render($area);
 >    }
 >}
-
+>
 >$rectangles = [new Rectangle(), new Rectangle(), new Square()];
 >renderLargeRectangles($rectangles);
 >```
-
+>
 >友好的:
-
+>
 >```php
 >abstract class Shape
 >{
 >    protected $width = 0;
 >    protected $height = 0;
-
+>
 >    abstract public function getArea(): int;
-
+>
 >    public function render(int $area): void
 >   {
 >        // ...
 >    }
 >}
-
+>
 >class Rectangle extends Shape
 >{
 >    public function setWidth(int $width): void
 >    {
 >        $this->width = $width;
 >    }
-
+>
 >    public function setHeight(int $height): void
 >    {
 >        $this->height = $height;
 >    }
-
+>
 >    public function getArea(): int
 >    {
 >        return $this->width * $this->height;
 >    }
 >}
-
+>
 >class Square extends Shape
 >{
 >    private $length = 0;
-
+>
 >    public function setLength(int $length): void
 >    {
 >        $this->length = $length;
 >    }
-
+>
 >    public function getArea(): int
 >    {
 >        return pow($this->length, 2);
@@ -1522,7 +1523,7 @@ function travelToTexas(Traveler $vehicle): void
 >        $rectangle->render($area);
 >    }
 >}
-
+>
 >$shapes = [new Rectangle(), new Rectangle(), new Square()];
 >renderLargeRectangles($shapes);
 >```
@@ -1530,78 +1531,78 @@ function travelToTexas(Traveler $vehicle): void
 - 接口隔离原则 (ISP)
 
 >ISP的意思就是说“使用者不应该强制使用它不需要的接口”。
-
+>
 >当一个类需要大量的设置是一个不错的例子去解释这个原则。为了方便去调用这个接口需要做大量的设置，但是大多数情况下是不需要的。强制让他们使用这些设置会让整个接口显得臃肿。
-
+>
 >不友好的:
-
+>
 >```php
 >interface Employee
 >{
 >    public function work(): void;
-
+>
 >    public function eat(): void;
 >}
-
+>
 >class Human implements Employee
 >{
 >    public function work(): void
 >    {
 >        // ....working
 >    }
-
+>
 >    public function eat(): void
 >    {
 >        // ...... eating in lunch break
 >    }
 >}
-
+>
 >class Robot implements Employee
 >{
 >    public function work(): void
 >    {
 >        //.... working much more
 >    }
-
+>
 >    public function eat(): void
 >    {
 >        //.... robot can't eat, but it must implement this method
 >    }
 >}
 >```
-
+>
 >友好的:
-
+>
 >>并非每一个工人都是职员，但是每一个职员都是工人。
-
+>
 >```php
 >interface Workable
 >{
 >    public function work(): void;
 >}
-
+>
 >interface Feedable
 >{
 >    public function eat(): void;
 >}
-
+>
 >interface Employee extends Feedable, Workable
 >{
 >}
-
+>
 >class Human implements Employee
 >{
 >    public function work(): void
 >    {
 >        // ....working
 >    }
-
+>
 >    public function eat(): void
 >    {
 >        //.... eating in lunch break
 >    }
 >}
-
+>
 >// robot can only work
 >class Robot implements Workable
 >{
@@ -1611,17 +1612,17 @@ function travelToTexas(Traveler $vehicle): void
 >    }
 >}
 >```
-
+>
 - 依赖反转原则 (DIP)
 
 >这个原则有两个需要注意的地方：
 > 1. 高阶模块不能依赖于低阶模块。他们都应该依赖于抽象。
 > 2. 抽象不应该依赖于实现，实现应该依赖于抽象。
-
+>
 >第一点可能有点难以理解，但是如果你有使用过像`Symfony`的`PHP`框架，你应该有见到过依赖注入这样的原则的实现。尽管他们是不一样的概念，`DIP`让高阶模块从我们所知道的低阶模块中分离出去。可以通过`DI`这种方式实现。一个巨大的好处在于它解耦了不同的模块。耦合是一个非常不好的开发模式，因为它会让你的代码难以重构。
-
+>
 >不友好的:
-
+>
 >```php
 >class Employee
 >{
@@ -1630,7 +1631,7 @@ function travelToTexas(Traveler $vehicle): void
 >        // ....working
 >    }
 >}
-
+>
 >class Robot extends Employee
 >{
 >    public function work(): void
@@ -1638,31 +1639,31 @@ function travelToTexas(Traveler $vehicle): void
 >        //.... working much more
 >    }
 >}
-
+>
 >class Manager
 >{
 >    private $employee;
-
+>
 >    public function __construct(Employee $employee)
 >    {
 >        $this->employee = $employee;
 >    }
-
+>
 >    public function manage(): void
 >    {
 >        $this->employee->work();
 >    }
 >}
 >```
-
+>
 >友好的
-
+>
 >```php
 >interface Employee
 >{
 >    public function work(): void;
 >}
-
+>
 >class Human implements Employee
 >{
 >    public function work(): void
@@ -1670,7 +1671,7 @@ function travelToTexas(Traveler $vehicle): void
 >        // ....working
 >    }
 >}
-
+>
 >class Robot implements Employee
 >{
 >    public function work(): void
@@ -1678,37 +1679,37 @@ function travelToTexas(Traveler $vehicle): void
 >        //.... working much more
 >    }
 >}
-
+>
 >class Manager
 >{
 >    private $employee;
-
+>
 >    public function __construct(Employee $employee)
 >    {
 >        $this->employee = $employee;
 >    }
-
+>
 >    public function manage(): void
 >    {
 >        $this->employee->work();
 >    }
 >}
 >```
-
+>
 ## 别重复你的代码 (DRY)
 
 >尝试去研究[DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)原则。
-
+>
 >尽可能别去复制代码。复制代码非常不好，因为这意味着将来有需要修改的业务逻辑时你需要修改不止一处。
-
+>
 >想象一下你在经营一个餐馆并且你需要经常整理你的存货清单：你所有的土豆，洋葱，大蒜，辣椒等。如果你有多个列表来管理进销记录，当你用其中一些土豆做菜时你需要更新所有的列表。如果你只有一个列表的话只有一个地方需要更新!
-
+>
 >大多数情况下你有重复的代码是因为你有超过两处细微的差别，他们大部分都是相同的，但是他们的不同之处又不得不让你去分成不同的方法去处理相同的事情。移除这些重复的代码意味着你需要创建一个可以用一个方法/模块/类来处理的抽象。
-
+>
 >使用一个抽象是关键的，这也是为什么在类中你要遵循`SOLID`原则的原因。一个不优雅的抽象往往比重复的代码更糟糕，所以要谨慎使用！说了这么多，如果你已经可以构造一个优雅的抽象，那就赶紧去做吧！别重复你的代码，否则当你需要修改时你会发现你要修改许多地方。
-
+>
 >不友好的:
-
+>
 >```php
 >function showDeveloperList(array $developers): void
 >{
@@ -1721,11 +1722,11 @@ function travelToTexas(Traveler $vehicle): void
 >            $experience,
 >            $githubLink
 >        ];
-
+>
 >        render($data);
 >    }
 >}
-
+>
 >function showManagerList(array $managers): void
 >{
 >    foreach ($managers as $manager) {
@@ -1737,14 +1738,14 @@ function travelToTexas(Traveler $vehicle): void
 >            $experience,
 >            $githubLink
 >        ];
-
+>
 >        render($data);
 >    }
 >}
 >```
-
+>
 >友好的:
-
+>
 >```php
 >function showList(array $employees): void
 >{
@@ -1757,16 +1758,16 @@ function travelToTexas(Traveler $vehicle): void
 >            $experience,
 >            $githubLink
 >        ];
-
+>
 >        render($data);
 >    }
 >}
 >```
-
+>
 >非常优雅的:
-
+>
 >>如果能更简洁那就更好了。
-
+>
 >```php
 >function showList(array $employees): void
 >{
