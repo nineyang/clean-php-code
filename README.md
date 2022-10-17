@@ -627,7 +627,7 @@
 >}
 >```
 >
->不友好的
+>友好的
 >
 >```php
 >class Configuration
